@@ -7,6 +7,7 @@ const CONFIRMATION_FIELD_SELECTOR = '#confirmationNumber';
 const FIRST_NAME_SELECTOR = '#passengerFirstName';
 const LAST_NAME_SELECTOR = '#passengerLastName';
 const CONFIRM_BUTTON_SELECTOR = '#form-mixin--submit-button';
+const RUN_TEST_FLIGHT = true;
 
 let jobs = [];
 
@@ -63,8 +64,9 @@ const scheduleConfirmation = flight => {
 };
 
 const confirmFlight = async (firstName, lastName, confirmationNumber) => {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
+  page.setViewport({ width: 1920, height: 1080 });
   await page.goto(CHECKIN_URL);
   const [
     confirmationNumberInput,
@@ -82,10 +84,13 @@ const confirmFlight = async (firstName, lastName, confirmationNumber) => {
   await lastNameInput.type(lastName);
   await button.click();
   await page.waitFor(5000);
-  await page.screenshot({ path: 'example.png' });
+  await page.screenshot({
+    path: `${confirmationNumber}.png`,
+  });
   await browser.close();
 };
 
+if (RUN_TEST_FLIGHT) confirmFlight('Test', 'Testerson', 'ABC123');
 scheduleFlights(flights);
 
 // Keep the script running while there are still jobs to do
