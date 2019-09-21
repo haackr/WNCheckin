@@ -86,7 +86,12 @@ const confirmFlight = async (firstName, lastName, confirmationNumber) => {
   await button.click();
   await page.waitForNavigation({ waitUntil: 'networkidle2' });
   const checkinButton = await page.$(CHECKIN_BUTTON_SELECTOR);
-  if (checkinButton.click) await checkinButton.click();
+  try {
+    await checkinButton.click();
+  } catch (error) {
+    console.log('ERROR: Could not click second check-in button! :');
+    console.log(error);
+  }
   await page.waitForNavigation({ waitUntil: 'networkidle0' });
   await page.screenshot({
     path: `${confirmationNumber}.png`,
