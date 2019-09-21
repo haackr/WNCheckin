@@ -7,6 +7,7 @@ const CONFIRMATION_FIELD_SELECTOR = '#confirmationNumber';
 const FIRST_NAME_SELECTOR = '#passengerFirstName';
 const LAST_NAME_SELECTOR = '#passengerLastName';
 const CONFIRM_BUTTON_SELECTOR = '#form-mixin--submit-button';
+const CHECKIN_BUTTON_SELECTOR = '.air-check-in-review-results--check-in-button';
 const RUN_TEST_FLIGHT = true;
 
 let jobs = [];
@@ -83,7 +84,10 @@ const confirmFlight = async (firstName, lastName, confirmationNumber) => {
   await firstNameInput.type(firstName);
   await lastNameInput.type(lastName);
   await button.click();
-  await page.waitFor(5000);
+  await page.waitForNavigation({ waitUntil: 'networkidle2' });
+  const checkinButton = await page.$(CHECKIN_BUTTON_SELECTOR);
+  if (checkinButton.click) await checkinButton.click();
+  await page.waitForNavigation({ waitUntil: 'networkidle0' });
   await page.screenshot({
     path: `${confirmationNumber}.png`,
   });
